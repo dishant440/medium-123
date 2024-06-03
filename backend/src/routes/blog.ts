@@ -22,20 +22,19 @@ blogRouter.use("/*", async (c, next) => {
 	  c.status(401);
 	  return c.json({ error: "unauthorized" });
 	}
-  
+  const jwttoken = jwt.split(" ")[1];
 	try {
-	  const payload = await verify(jwt, c.env.JWT_SECRET);
+	  const payload = await verify(jwttoken, c.env.JWT_SECRET);
   
 	  if (!payload) {
 		c.status(401);
 		return c.json({ error: "unauthorized" });
 	  }
-  
-	  const decoded = await decode(jwt);
+    const decoded = await decode(jwt);
 	  const id = decoded.payload.id as string;
 	  c.set('userId', id);
-  
-	  await next();
+  	  await next();
+
 	} catch (error) {
 	  c.status(401);
 	  return c.json({ error: "unauthorized" });
