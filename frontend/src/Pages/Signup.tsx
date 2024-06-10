@@ -1,10 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Input, Button } from "../components/index";
 
 export default function Signup() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +11,7 @@ export default function Signup() {
 
   return (
     <>
-      <div className="flex justify-evenly items-center min-h-screen bg-white flex-row ">
+      <div className="flex justify-evenly items-center p-4 mt-20">
         <div className="left bg-white shadow-lg flex flex-col w-[300px] justify-center items-center p-4 ">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
