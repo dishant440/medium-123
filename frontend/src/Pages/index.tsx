@@ -1,8 +1,8 @@
 import Signin from "./Signin";
 import Signup from "./Signup";
-import Dashboard from "./Blog";
+import Blog from "./Blog";
 
 
 export {
-    Signin,Signup,Dashboard
+    Signin,Signup,Blog
 }
