@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Input, Button } from "../components/index";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
   // const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function Signup() {
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
             <p className="text-gray-600 mt-2">Create your account</p>
+            <span className="text-gray-600 text-sm">Already have an account
+              <Link to="/signin" className="pl-2 text-gray-600 underline">Log in</Link>
+            </span>
           </div>
           <form onSubmit={handleSubmit}>
             <Input
