@@ -16,8 +16,8 @@ export default function Signup() {
 
   return (
    <>
-   <div className="flex justify-center items-center min-h-screen bg-blue-100">
-      <div className="left">
+   <div className="flex justify-center items-center min-h-screen bg-white flex-row">
+      <div className="left bg-white shadow-lg flex flex-col w-[300px] justify-center items-center p-4">
         <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
             <p className="text-gray-600 mt-2">Create your account</p>
@@ -29,7 +29,9 @@ export default function Signup() {
             <Button Type="submit" value="Sign Up" />
           </form>
       </div>
-      <div className="right"></div>
+      <div className="right">
+        
+      </div>
    </div>
    </>
   )
