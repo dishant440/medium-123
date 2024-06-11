@@ -1,7 +1,17 @@
 import PostCard from "../components/PostCard";
 import AppBar from "../components/AppBar";
+import { useBlog } from "../hooks";
 
 export default function AllPost() {
+  const {loading,blogs} = useBlog();
+
+  if (loading) {
+    return <div>
+      Loading .....
+    </div>
+  }
+  
+
   return (<>
   <AppBar/>
   <div className="mx-20">

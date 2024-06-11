@@ -18,11 +18,15 @@ export const blogRouter = new Hono<{
 
 blogRouter.use("/*", async (c, next) => {
 	const jwt = c.req.header('Authorization') || "";
+  // console.log(jwt);
+  
 	if (!jwt) {
 	  c.status(401);
 	  return c.json({ error: "unauthorized" });
 	}
   const jwttoken = jwt.split(" ")[1];
+  // console.log(jwttoken);
+  
 	try {
 	  const payload = await verify(jwttoken, c.env.JWT_SECRET);
   
@@ -30,14 +34,18 @@ blogRouter.use("/*", async (c, next) => {
 		c.status(401);
 		return c.json({ error: "unauthorized" });
 	  }
-    const decoded = await decode(jwt);
-	  const id = decoded.payload.id as string;
+    const decoded = await decode(jwttoken);
+    console.log(decoded);
+        
+    const id = decoded.payload.id as string;
+    
+    
 	  c.set('userId', id);
   	  await next();
 
 	} catch (error) {
 	  c.status(401);
-	  return c.json({ error: "unauthorized" });
+	  return c.json({ error: "unauthorized user sign in" });
 	}
   });
   
@@ -46,7 +54,6 @@ blogRouter.use("/*", async (c, next) => {
 blogRouter.post("/create", async (c) => {
   const body = await c.req.json();
   const id = c.get("userId");
-  console.log("i am in route :" + id);
 
   const prisma = new PrismaClient({
 	datasourceUrl: c.env.DATABASE_URL,
@@ -62,7 +69,8 @@ blogRouter.post("/create", async (c) => {
     });
 
     return c.json({
-      id: newBlog.id
+      id: newBlog.id,
+      message:"blog created successfully"
     });
   } catch (error) {
     console.error("Error creating blog:", error);
@@ -78,7 +86,18 @@ blogRouter.get('/bulk', async (c) => {
     }).$extends(withAccelerate());
 
   try {
-    const Blog = await prisma.blog.findMany({});
+    const Blog = await prisma.blog.findMany({
+      select:{
+        title: true,
+        content:true,
+        id:true,
+        author:{
+          select:{
+            username: true,
+          }
+        }
+      }
+    });
     return c.json({ 
       Blog
     });
