@@ -48,8 +48,8 @@ export default function Signup() {
         </div>
         <div className="right flex flex-col w-[400px] gap-y-3">
           <p className="text-2xl font-bold ">
-            The customer service I recerived was exceptional The support team
-            went above and beyond to address my concerns
+            The customer service I received was exceptional. The support team
+            went above and beyond to address my concerns.
           </p>
           <div className="text-sm flex flex-col ">
             <span className="font-bold">Jules Winfield</span>

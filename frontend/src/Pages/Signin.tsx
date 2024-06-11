@@ -38,7 +38,7 @@ export default function Signin() {
             <Button Type="submit" value="Sign In" />
           </form>
         </div>
-        <div className="right flex flex-col w-[400px] gap-y-3">
+        <div className="right flex flex-col w-[400px] gap-y-3 mt-20">
           <p className="text-2xl font-bold ">
             The customer service I received was exceptional. The support team
             went above and beyond to address my concerns.
