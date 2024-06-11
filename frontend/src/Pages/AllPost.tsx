@@ -16,9 +16,9 @@ export default function AllPost() {
         publishedDate="2024-06-08" 
       />  
          <PostCard 
-        title="Sample Title" 
-        authorName="Dishant Nalwaya" 
-        publishedDate="2024-06-08" 
+        title="Stay Hydrated" 
+        authorName="Kashi Shreshtha" 
+        publishedDate="2022-01-07" 
       />
      <PostCard 
         title="Sample Title" 

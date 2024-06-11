@@ -11,7 +11,7 @@ export default function PostCard({
 }: BlogCardProps) {
   return (
     <div className=" mt-10 shadow-md py-2   ">
-      <div className="Top flex flex-row gap-x-2 text-md mt-2 ml-2 ">
+      <div className="Top flex flex-row justify-between text-md m-2 ">
         <span>{authorName}</span>
         <span>{publishedDate}</span>
       </div>
