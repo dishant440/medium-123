@@ -7,12 +7,13 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [Name,setName] = useState("");
 
   function handleSubmit() {}
 
   return (
     <>
-      <div className="flex justify-evenly items-center p-4 mt-20">
+      <div className="flex justify-evenly items-center p-4 mt-15">
         <div className="left bg-white shadow-lg flex flex-col w-[300px] justify-center items-center p-4 ">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
@@ -28,6 +29,13 @@ export default function Signup() {
               name="username"
               Value={username}
               onChange={(e: any) => setUsername(e.target.value)}
+            />
+            <Input
+              Label="Name"
+              Placeholder="Name"
+              name="Name"
+              Value={Name}
+              onChange={(e: any) => setName(e.target.value)}
             />
             <Input
               Label="email"

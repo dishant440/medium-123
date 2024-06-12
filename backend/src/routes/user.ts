@@ -14,7 +14,6 @@ export const userRouter = new Hono<{
 }>();
 
 userRouter.post('/signup', async (c) => {
-    // Log environment variables to ensure they are loaded correctly
     const body = await c.req.json();
 
     const prisma = new PrismaClient({

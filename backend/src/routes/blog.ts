@@ -93,7 +93,7 @@ blogRouter.get('/bulk', async (c) => {
         id:true,
         author:{
           select:{
-            username: true,
+            name: true,
           }
         }
       }
