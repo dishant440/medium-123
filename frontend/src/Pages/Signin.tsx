@@ -1,14 +1,50 @@
 import { useState } from "react";
 import { Input, Button } from "../components/index";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Signin() {
- 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  function handleSubmit() {}
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const toastId = toast.loading("Signing up...");
 
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8787/api/v1/user/signup",
+        {
+          email,
+          password,
+        }
+      );
+      localStorage.setItem("token", response.data.token);
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.token}`;
+
+      toast.update(toastId, {
+        render: "Signup successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      navigate("/signin");
+    } catch (error: any) {
+      toast.update(toastId, {
+        render: error.response?.data?.message || "Error during signup",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  }
   return (
     <>
       <div className="flex justify-evenly items-center p-4 mt-20">
@@ -16,8 +52,11 @@ export default function Signin() {
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sign In</h1>
             <p className="text-gray-600 mt-2">Welcome back!</p>
-            <span className="text-gray-600 text-sm">Don't have an account?
-              <Link to="/signup" className="pl-2 text-gray-600 underline">Sign Up</Link>
+            <span className="text-gray-600 text-sm">
+              Don't have an account?
+              <Link to="/signup" className="pl-2 text-gray-600 underline">
+                Sign Up
+              </Link>
             </span>
           </div>
           <form onSubmit={handleSubmit}>
@@ -49,7 +88,7 @@ export default function Signin() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }
-

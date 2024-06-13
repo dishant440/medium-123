@@ -21,7 +21,13 @@ export default function AllPost() {
             <span className="mx-4 font-serif font-semibold">Following</span>
         </div>
      <div className="flex flex-col mx-10 mt-2 shadow-md p-2">
-    
+      {
+        blogs.map(blog=><PostCard
+          title={blog.title}
+          authorName={blog.author.name || "Anonymous"} 
+          publishedDate="2024-06-08" 
+        />)
+      }
      <PostCard 
         title="How to learn programming" 
         authorName="Dishant Nalwaya" 

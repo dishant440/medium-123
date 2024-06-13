@@ -1,15 +1,48 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input, Button } from "../components/index";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [Name,setName] = useState("");
+  const [Name, setName] = useState("");
 
-  function handleSubmit() {}
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const toastId = toast.loading("Signing up...");
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8787/api/v1/user/signup", {
+        Name,
+        email,
+        password,
+        username,
+      });
+      localStorage.setItem("token", response.data.token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
+
+      toast.update(toastId, {
+        render: "Signup successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      navigate("/signin");
+    } catch (error:any) {
+      toast.update(toastId, {
+        render: error.response?.data?.message || "Error during signup",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  }
 
   return (
     <>
@@ -65,6 +98,7 @@ export default function Signup() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }
