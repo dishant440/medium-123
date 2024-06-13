@@ -17,7 +17,7 @@ export default function Signin() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8787/api/v1/user/signup",
+        "http://127.0.0.1:8787/api/v1/user/signin",
         {
           email,
           password,
@@ -29,13 +29,13 @@ export default function Signin() {
       ] = `Bearer ${response.data.token}`;
 
       toast.update(toastId, {
-        render: "Signup successful!",
+        render: "Signin successful!",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
 
-      navigate("/signin");
+      navigate("/allpost");
     } catch (error: any) {
       toast.update(toastId, {
         render: error.response?.data?.message || "Error during signup",

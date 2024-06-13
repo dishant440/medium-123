@@ -22,17 +22,17 @@ blogRouter.use("/*", async (c, next) => {
   
 	if (!jwt) {
 	  c.status(401);
-	  return c.json({ error: "unauthorized" });
+	  return c.json({ error: "invalid token try signing in" });
 	}
   const jwttoken = jwt.split(" ")[1];
-  // console.log(jwttoken);
+
   
 	try {
 	  const payload = await verify(jwttoken, c.env.JWT_SECRET);
   
 	  if (!payload) {
 		c.status(401);
-		return c.json({ error: "unauthorized" });
+		return c.json({ error: "you are not authorized" });
 	  }
     const decoded = await decode(jwttoken);
     console.log(decoded);
