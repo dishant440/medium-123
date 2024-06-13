@@ -39,7 +39,6 @@ userRouter.post('/signup', async (c) => {
             token: token,
         });
     } catch (error) {
-        console.error(error);
         return c.json({ message: 'Error during signup', error });
     } 
 });

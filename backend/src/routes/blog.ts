@@ -35,8 +35,7 @@ blogRouter.use("/*", async (c, next) => {
 		return c.json({ error: "you are not authorized" });
 	  }
     const decoded = await decode(jwttoken);
-    console.log(decoded);
-        
+    
     const id = decoded.payload.id as string;
     
     
@@ -73,7 +72,6 @@ blogRouter.post("/create", async (c) => {
       message:"blog created successfully"
     });
   } catch (error) {
-    console.error("Error creating blog:", error);
     return c.json({ message: "error creating blog" });
   } finally {
     await prisma.$disconnect();

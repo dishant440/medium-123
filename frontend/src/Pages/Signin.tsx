@@ -13,7 +13,7 @@ export default function Signin() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const toastId = toast.loading("Signing up...");
+    const toastId = toast.loading("Signing in...");
 
     try {
       const response = await axios.post(
@@ -38,7 +38,7 @@ export default function Signin() {
       navigate("/allpost");
     } catch (error: any) {
       toast.update(toastId, {
-        render: error.response?.data?.message || "Error during signup",
+        render: error.response?.data?.message || "Error during signin",
         type: "error",
         isLoading: false,
         autoClose: 3000,
