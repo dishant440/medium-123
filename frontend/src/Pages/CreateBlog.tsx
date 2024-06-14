@@ -1,14 +1,47 @@
 import React, { useState } from "react";
 import { Input } from "../components/index";
 import medium from "../assets/medium.svg";
+import { useNavigate } from "react-router-dom";
+import { Loading } from "../components/index";
+import { useCreateBlog } from "../hooks/index";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const { createBlog, loading } = useCreateBlog();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Blog submitted:", { title, content });
+    const toastId = toast.loading("creating blog ...");
+    if (loading) {
+      return (
+        <div>
+          <Loading />
+        </div>
+      );
+    }
+
+    try {
+      await createBlog(title, content);
+
+      toast.update(toastId, {
+        render: "create new blog",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      navigate("/createBlog");
+    } catch (error:any) {
+      toast.update(toastId, {
+        render: error.response?.data?.message || "failed create blog",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -16,7 +49,7 @@ const CreateBlog = () => {
       <div className="bg-white shadow-lg min-h-screen rounded-lg p-8 max-w-4xl w-full">
         <div className="grid grid-cols-3">
           <img className="w-10 h-10" src={medium} alt="" />
-          
+
           <h1 className="text-3xl font-bold mb-6 text-center">Create Blog</h1>
         </div>
         <form onSubmit={handleSubmit}>
@@ -58,6 +91,7 @@ const CreateBlog = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

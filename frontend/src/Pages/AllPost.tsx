@@ -1,13 +1,14 @@
 import PostCard from "../components/PostCard";
 import AppBar from "../components/AppBar";
 import { useBlog } from "../hooks";
+import { Loading } from "../components";
 
 export default function AllPost() {
   const {loading,blogs} = useBlog();
 
   if (loading) {
     return <div>
-      Loading .....
+      <Loading/>
     </div>
   }
   

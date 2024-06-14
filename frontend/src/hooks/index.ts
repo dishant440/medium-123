@@ -10,6 +10,40 @@ interface Blog {
   };
 }
 
+export const useCreateBlog = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createBlog = async (title: string, content: string) => {
+    const backend_url = "http://127.0.0.1:8787";
+    const token = localStorage.getItem("token");
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post(
+        `${backend_url}/api/v1/blog/create`,
+        { title, content },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
+      console.log(response.data);
+      
+      return response.data;
+    } catch (error: any) {
+      setError(error.message);
+      throw error;  // Rethrow error to allow the component to handle it if needed
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { createBlog, loading, error };
+};
+
 export const useBlog = () => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -36,5 +70,5 @@ export const useBlog = () => {
     fetchBlogs();
   }, [backend_url]);
 
-  return { loading, blogs, error };
+  return { loading, blogs, error};
 };
