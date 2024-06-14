@@ -16,8 +16,7 @@ export const useBlog = () => {
   const [error, setError] = useState<string | null>(null);
   const backend_url = "http://127.0.0.1:8787";
   const token = localStorage.getItem("token");
-  console.log(token);
-    
+   
   useEffect(() => {
     const fetchBlogs = async () => {
       try {

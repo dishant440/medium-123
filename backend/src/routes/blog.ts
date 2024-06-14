@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
-import { verify,decode } from 'hono/jwt';
+import { verify, decode } from 'hono/jwt';
 
 type Variable = {
-	userId: string;
+  userId: string;
 }
 
 
@@ -17,37 +17,37 @@ export const blogRouter = new Hono<{
 }>();
 
 blogRouter.use("/*", async (c, next) => {
-	const jwt = c.req.header('Authorization') || "";
+  const jwt = c.req.header('Authorization') || "";
   // console.log(jwt);
-  
-	if (!jwt) {
-	  c.status(401);
-	  return c.json({ error: "invalid token try signing in" });
-	}
+
+  if (!jwt) {
+    c.status(401);
+    return c.json({ error: "invalid token try signing in" });
+  }
   const jwttoken = jwt.split(" ")[1];
 
-  
-	try {
-	  const payload = await verify(jwttoken, c.env.JWT_SECRET);
-  
-	  if (!payload) {
-		c.status(401);
-		return c.json({ error: "you are not authorized" });
-	  }
-    const decoded = await decode(jwttoken);
-    
-    const id = decoded.payload.id as string;
-    
-    
-	  c.set('userId', id);
-  	  await next();
 
-	} catch (error) {
-	  c.status(401);
-	  return c.json({ error: "unauthorized user sign in" });
-	}
-  });
-  
+  try {
+    const payload = await verify(jwttoken, c.env.JWT_SECRET);
+
+    if (!payload) {
+      c.status(401);
+      return c.json({ error: "you are not authorized" });
+    }
+    const decoded = await decode(jwttoken);
+
+    const id = decoded.payload.id as string;
+
+
+    c.set('userId', id);
+    await next();
+
+  } catch (error) {
+    c.status(401);
+    return c.json({ error: "unauthorized user sign in" });
+  }
+});
+
 
 // Route to post blog
 blogRouter.post("/create", async (c) => {
@@ -55,21 +55,22 @@ blogRouter.post("/create", async (c) => {
   const id = c.get("userId");
 
   const prisma = new PrismaClient({
-	datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate());
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
   try {
     const newBlog = await prisma.blog.create({
       data: {
         title: body.title,
         content: body.content,
-        authorId: id
+        authorId: id,
+
       }
     });
 
     return c.json({
       id: newBlog.id,
-      message:"blog created successfully"
+      message: "blog created successfully"
     });
   } catch (error) {
     return c.json({ message: "error creating blog" });
@@ -79,24 +80,24 @@ blogRouter.post("/create", async (c) => {
 });
 // Route to fetch all the blog articles
 blogRouter.get('/bulk', async (c) => {
-	const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
   try {
     const Blog = await prisma.blog.findMany({
-      select:{
+      select: {
         title: true,
-        content:true,
-        id:true,
-        author:{
-          select:{
+        content: true,
+        id: true,
+        author: {
+          select: {
             name: true,
           }
         }
       }
     });
-    return c.json({ 
+    return c.json({
       Blog
     });
   } catch (error) {
@@ -114,8 +115,8 @@ blogRouter.get('/bulk', async (c) => {
 blogRouter.put('/', async (c) => {
   const body = await c.req.json();
   const prisma = new PrismaClient({
-	datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate());
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
   try {
     const Blog = await prisma.blog.update({
@@ -143,8 +144,8 @@ blogRouter.put('/', async (c) => {
 blogRouter.get('/:id', async (c) => {
   const Id = await c.req.param('id');
   const prisma = new PrismaClient({
-	datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate());
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
   try {
     const Blog = await prisma.blog.findFirst({
@@ -152,8 +153,21 @@ blogRouter.get('/:id', async (c) => {
         id: Id
       },
     });
-    return c.json({ 
-      Blog
+    const author = Blog?.authorId;
+    
+      const blogAuthor = await prisma.user.findFirst({
+        where:{
+          id:author
+        }
+      })
+      console.log(blogAuthor);
+      
+   
+    return c.json({
+      id:Blog?.id,
+      title: Blog?.title,
+      content: Blog?.content,
+      author:blogAuthor?.name || "anonymous"
     });
   } catch (error) {
     console.error("Error fetching blog:", error);
