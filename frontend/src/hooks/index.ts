@@ -10,6 +10,27 @@ interface Blog {
   };
 }
 
+export const getblog = async (id:string) =>{
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+ 
+
+  try {
+    const response = await axios.get(`http://127.0.0.1:8787/api/v1/blog/${id}`,{
+      headers: {
+        Authorization:localStorage.getItem('token')
+      }
+    });
+    setBlogs(response.data)
+
+  } catch (error) {
+    
+  }
+
+}
+
+
 export const useCreateBlog = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -4,6 +4,7 @@ import AuthorSec from "../components/AuthorSec";
 import medium from "../assets/medium.svg";
 
 export default function Blog() {
+  
   return (
     <>
       <img className="w-10 h-10 mx-10 mt-2" src={medium} alt="" />

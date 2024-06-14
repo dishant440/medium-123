@@ -25,7 +25,7 @@ const CreateBlog = () => {
     }
 
     try {
-      await createBlog(title, content);
+      const response = await createBlog(title, content);
 
       toast.update(toastId, {
         render: "create new blog",

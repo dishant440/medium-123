@@ -154,6 +154,7 @@ blogRouter.get('/:id', async (c) => {
       },
     });
     const author = Blog?.authorId;
+    console.log(author);
     
       const blogAuthor = await prisma.user.findFirst({
         where:{
@@ -164,10 +165,12 @@ blogRouter.get('/:id', async (c) => {
       
    
     return c.json({
-      id:Blog?.id,
+      Post:{
+        id:Blog?.id,
       title: Blog?.title,
       content: Blog?.content,
       author:blogAuthor?.name || "anonymous"
+      }
     });
   } catch (error) {
     console.error("Error fetching blog:", error);

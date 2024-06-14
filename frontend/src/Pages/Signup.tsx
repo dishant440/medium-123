@@ -10,7 +10,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [Name, setName] = useState("");
+  const [name, setName] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -18,7 +18,7 @@ export default function Signup() {
 
     try {
       const response = await axios.post("http://127.0.0.1:8787/api/v1/user/signup", {
-        Name,
+        name,
         email,
         password,
         username,
@@ -64,10 +64,10 @@ export default function Signup() {
               onChange={(e: any) => setUsername(e.target.value)}
             />
             <Input
-              Label="Name"
+              Label="Name"  
               Placeholder="Name"
               name="Name"
-              Value={Name}
+              Value={name}
               onChange={(e: any) => setName(e.target.value)}
             />
             <Input
