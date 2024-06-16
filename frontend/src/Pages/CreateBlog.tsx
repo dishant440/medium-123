@@ -25,15 +25,16 @@ const CreateBlog = () => {
     }
 
     try {
-      const response = await createBlog(title, content);
-
+      await createBlog(title, content);
       toast.update(toastId, {
-        render: "create new blog",
+        render: "successfully created ",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
-      navigate("/createBlog");
+      setTimeout(() => {
+        navigate("/allpost");
+      },1500)
     } catch (error:any) {
       toast.update(toastId, {
         render: error.response?.data?.message || "failed create blog",

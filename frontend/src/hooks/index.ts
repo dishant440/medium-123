@@ -1,34 +1,49 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+
 
 interface Blog {
   content: string;
   title: string;
-  id: number;
+  id: string;
   author: {
     name: string;
   };
 }
 
-export const getblog = async (id:string) =>{
-  const [loading, setLoading] = useState(false);
+export const useReadBlog = () => {
   const [error, setError] = useState<string | null>(null);
-  const [blogs, setBlogs] = useState<Blog[]>([]);
- 
+  const [blog, setBlog] = useState<Blog | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  try {
-    const response = await axios.get(`http://127.0.0.1:8787/api/v1/blog/${id}`,{
-      headers: {
-        Authorization:localStorage.getItem('token')
-      }
-    });
-    setBlogs(response.data)
+  const readBlog = async (id: string) => {
+    setLoading(true);
+    setError(null);
 
-  } catch (error) {
-    
-  }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Token not found');
+      setLoading(false);
+      return;
+    }
 
-}
+    try {
+      const response = await axios.get(`http://127.0.0.1:8787/api/v1/blog/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setBlog(response.data);
+    } catch (error: any) {
+      setError(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { readBlog, loading, error, blog };
+};
 
 
 export const useCreateBlog = () => {
@@ -51,8 +66,8 @@ export const useCreateBlog = () => {
           }
         }
       );
-      console.log(response.data);
-      
+
+
       return response.data;
     } catch (error: any) {
       setError(error.message);
@@ -71,13 +86,13 @@ export const useBlog = () => {
   const [error, setError] = useState<string | null>(null);
   const backend_url = "http://127.0.0.1:8787";
   const token = localStorage.getItem("token");
-   
+
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(`${backend_url}/api/v1/blog/bulk`, {
           headers: {
-            Authorization:`Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setBlogs(response.data.Blog);
@@ -91,5 +106,5 @@ export const useBlog = () => {
     fetchBlogs();
   }, [backend_url]);
 
-  return { loading, blogs, error};
+  return { loading, blogs, error };
 };
