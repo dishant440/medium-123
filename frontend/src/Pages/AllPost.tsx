@@ -37,6 +37,7 @@ export default function AllPost() {
                 title={blog.title}
                 authorName={blog.author.name || "Anonymous"}
                 onClick={handlePost}
+                content={blog.content}
               />
             ))}
           </div>

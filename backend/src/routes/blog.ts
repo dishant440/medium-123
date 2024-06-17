@@ -3,22 +3,20 @@ import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
 import { verify, decode } from 'hono/jwt';
 
-type Variable = {
-  userId: string;
+type userVariable = {
+  userId:string;
 }
-
 
 export const blogRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
   },
-  Variables: Variable
+  Variables: userVariable
 }>();
 
 blogRouter.use("/*", async (c, next) => {
   const jwt = c.req.header('Authorization') || "";
-  // console.log(jwt);
 
   if (!jwt) {
     c.status(401);
@@ -35,9 +33,8 @@ blogRouter.use("/*", async (c, next) => {
       return c.json({ error: "you are not authorized" });
     }
     const decoded = await decode(jwttoken);
-
     const id = decoded.payload.id as string;
-
+    console.log("id is " + id);
 
     c.set('userId', id);
     await next();
@@ -52,7 +49,10 @@ blogRouter.use("/*", async (c, next) => {
 // Route to post blog
 blogRouter.post("/create", async (c) => {
   const body = await c.req.json();
-  const id = c.get("userId");
+  let id = c.get("userId");
+  console.log("/create id " + id);
+  
+  
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
@@ -70,10 +70,13 @@ blogRouter.post("/create", async (c) => {
 
     return c.json({
       id: newBlog.id,
+      authorid: newBlog.authorId,
       message: "blog created successfully"
     });
-  } catch (error) {
-    return c.json({ message: "error creating blog" });
+  } catch (error:any) {
+    return c.json({ message: "error creating blog",
+      error:error.message });
+     
   } finally {
     await prisma.$disconnect();
   }
@@ -83,6 +86,9 @@ blogRouter.get('/bulk', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
+  const Id = c.get("userId")
+  console.log("/bulk "+Id);
+  
 
   try {
     const Blog = await prisma.blog.findMany({
@@ -90,11 +96,7 @@ blogRouter.get('/bulk', async (c) => {
         title: true,
         content: true,
         id: true,
-        author: {
-          select: {
-            name: true,
-          }
-        }
+        author: true,
       }
     });
     return c.json({
@@ -140,50 +142,65 @@ blogRouter.put('/', async (c) => {
   }
 });
 
+
 // Route to fetch blog posts
 blogRouter.get('/:id', async (c) => {
-  const Id = await c.req.param('id');
+  const Id = c.req.param('id');
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
   try {
-    const Blog = await prisma.blog.findFirst({
+    const blog = await prisma.blog.findFirst({
       where: {
-        id: Id
+        id: Id,
+      },
+      include: {
+        author: true
       },
     });
-    const author = Blog?.authorId;
-    console.log(author);
 
-    const blogAuthor = await prisma.user.findFirst({
-      where: {
-        id: author
-      }
-    })
-    console.log(blogAuthor);
+    if (!blog) {
+      return c.json({
+        message: "Blog not found"
+      });
+    }
+    console.log(blog);
 
+    console.log(blog.author.name);
 
     return c.json({
-
-      id: Blog?.id,
-      title: Blog?.title,
-      content: Blog?.content,
-      author: blogAuthor?.name || "anonymous"
-
+      blog
     });
   } catch (error) {
     console.error("Error fetching blog:", error);
-    c.status(411);
+    c.status(500);
     return c.json({
-      message: "error fetching blog"
+      message: "Error fetching blog",
     });
   } finally {
     await prisma.$disconnect();
   }
 });
 
+// Add your routes to the router
+blogRouter.delete('/all', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
-
-
-
+  try {
+    await prisma.blog.deleteMany({});
+    return c.json({
+      message: "All blogs have been deleted",
+    });
+  } catch (error) {
+    console.error("Error deleting all blogs:", error);
+    c.status(500);
+    return c.json({
+      message: "Error deleting all blogs",
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+});

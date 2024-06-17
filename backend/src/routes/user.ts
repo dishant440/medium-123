@@ -63,8 +63,11 @@ userRouter.post('/signin', async (c) => {
                 message: "unauthorized user"
             })
         }
+    
+        
         const token = await sign({ id: exist.id }, c.env.JWT_SECRET);
         return c.json({
+            id:exist.id,
             message: 'Signin Successfull',
             token: token
         });
@@ -75,4 +78,24 @@ userRouter.post('/signin', async (c) => {
 });
 
 
-// export default userRouter;
+userRouter.delete('/all', async (c) => {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+  
+    try {
+      await prisma.user.deleteMany({});
+      return c.json({
+        message: "All user have been deleted",
+      });
+    } catch (error) {
+      console.error("Error deleting all user:", error);
+      c.status(500);
+      return c.json({
+        message: "Error deleting user",
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+  
