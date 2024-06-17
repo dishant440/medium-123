@@ -34,7 +34,7 @@ blogRouter.use("/*", async (c, next) => {
     }
     const decoded = await decode(jwttoken);
     const id = decoded.payload.id as string;
-    console.log("id is " + id);
+
 
     c.set('userId', id);
     await next();
@@ -50,8 +50,6 @@ blogRouter.use("/*", async (c, next) => {
 blogRouter.post("/create", async (c) => {
   const body = await c.req.json();
   let id = c.get("userId");
-  console.log("/create id " + id);
-  
   
 
   const prisma = new PrismaClient({
@@ -81,6 +79,8 @@ blogRouter.post("/create", async (c) => {
     await prisma.$disconnect();
   }
 });
+
+
 // Route to fetch all the blog articles
 blogRouter.get('/bulk', async (c) => {
   const prisma = new PrismaClient({
@@ -112,6 +112,7 @@ blogRouter.get('/bulk', async (c) => {
     await prisma.$disconnect();
   }
 });
+
 
 // Route to update the blog
 blogRouter.put('/', async (c) => {
