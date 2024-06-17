@@ -4,7 +4,7 @@ import { Hono } from 'hono';
 import { verify, decode } from 'hono/jwt';
 
 type userVariable = {
-  userId:string;
+  userId: string;
 }
 
 export const blogRouter = new Hono<{
@@ -50,7 +50,7 @@ blogRouter.use("/*", async (c, next) => {
 blogRouter.post("/create", async (c) => {
   const body = await c.req.json();
   let id = c.get("userId");
-  
+
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
@@ -62,6 +62,7 @@ blogRouter.post("/create", async (c) => {
         title: body.title,
         content: body.content,
         authorId: id,
+        published:true
 
       }
     });
@@ -71,10 +72,12 @@ blogRouter.post("/create", async (c) => {
       authorid: newBlog.authorId,
       message: "blog created successfully"
     });
-  } catch (error:any) {
-    return c.json({ message: "error creating blog",
-      error:error.message });
-     
+  } catch (error: any) {
+    return c.json({
+      message: "error creating blog",
+      error: error.message
+    });
+
   } finally {
     await prisma.$disconnect();
   }
@@ -87,8 +90,8 @@ blogRouter.get('/bulk', async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
   const Id = c.get("userId")
-  console.log("/bulk "+Id);
-  
+  console.log("/bulk " + Id);
+
 
   try {
     const Blog = await prisma.blog.findMany({
@@ -96,7 +99,11 @@ blogRouter.get('/bulk', async (c) => {
         title: true,
         content: true,
         id: true,
-        author: true,
+        author: {
+          select: {
+            name: true,
+          }
+        }
       }
     });
     return c.json({
@@ -157,7 +164,11 @@ blogRouter.get('/:id', async (c) => {
         id: Id,
       },
       include: {
-        author: true
+        author: {
+          select:{
+            name:true
+          }
+        }
       },
     });
 
@@ -166,12 +177,12 @@ blogRouter.get('/:id', async (c) => {
         message: "Blog not found"
       });
     }
-    console.log(blog);
 
-    console.log(blog.author.name);
 
     return c.json({
-      blog
+      title: blog.title,
+      content: blog.content,
+      author: blog.author.name
     });
   } catch (error) {
     console.error("Error fetching blog:", error);

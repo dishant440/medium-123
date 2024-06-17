@@ -19,6 +19,7 @@ export default function Blog() {
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
+  
 
   return (
     <>
@@ -27,9 +28,10 @@ export default function Blog() {
       <div className="grid grid-cols-3 gap-x-2 mt-2">
         <div className="left flex flex-col gap-y-4 p-10 justify-start col-start-1 max-w-4xl col-end-3 shadow-sm">
           {blog && (
+            
             <>
-              <Heading title={blog.title} />
-              <Post content={blog.content} />
+              <Heading title={blog?.title} />
+              <Post content={blog?.content} />
             </>
           )}
         </div>

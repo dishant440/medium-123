@@ -14,7 +14,7 @@ interface Blog {
 
 export const useReadBlog = () => {
   const [error, setError] = useState<string | null>(null);
-  const [blog, setBlog] = useState<Blog | null>(null);
+  const [blog, setBlog] = useState<Blog>();
   const [loading, setLoading] = useState(false);
 
   const readBlog = async (id: string) => {
