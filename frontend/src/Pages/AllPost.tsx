@@ -1,12 +1,23 @@
+import { useEffect } from "react";
 import PostCard from "../components/PostCard";
 import AppBar from "../components/AppBar";
 import { useBlog } from "../hooks";
 import { Loading } from "../components/index";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function AllPost() {
   const { loading, blogs } = useBlog();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    console.log(isAuthenticated);
+    
+    if (!isAuthenticated) {
+      navigate("/signin");
+    }
+  }, [isAuthenticated, navigate]);
 
   if (loading) {
     return (
@@ -19,6 +30,8 @@ export default function AllPost() {
   const handlePost = async (id: string) => {
     navigate(`/blog/${id}`);
   };
+
+
 
   return (
     <>

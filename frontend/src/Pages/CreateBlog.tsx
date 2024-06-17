@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Input } from "../components/index";
 import medium from "../assets/medium.svg";
 import { useNavigate } from "react-router-dom";
@@ -6,12 +6,22 @@ import { Loading } from "../components/index";
 import { useCreateBlog } from "../hooks/index";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../context/AuthContext";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const { createBlog, loading } = useCreateBlog();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    console.log(isAuthenticated);
+    
+    if (!isAuthenticated) {
+      navigate("/signin");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

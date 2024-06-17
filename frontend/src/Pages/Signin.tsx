@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../context/AuthContext";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const {login} = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,7 +36,7 @@ export default function Signin() {
         isLoading: false,
         autoClose: 3000,
       });
-
+      login();
       navigate("/allpost");
     } catch (error: any) {
       toast.update(toastId, {
